@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>生日快乐！</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Microsoft YaHei", sans-serif;
+        overflow: hidden;
+        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+        min-height: 100vh;
+        color: #fff;
+      }
+
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .page {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .page.active {
+        display: flex;
+      }
+
+      .welcome-container {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      .welcome-text {
+        font-size: 4em;
+        writing-mode: vertical-rl;
+        text-orientation: upright;
+        background: linear-gradient(180deg, #ffd700, #ff69b4, #87ceeb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: textShine 3s infinite;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        letter-spacing: 0.2em;
+      }
+
+      @keyframes textShine {
+        0%,
+        100% {
+          filter: brightness(1.2) drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+        }
+        50% {
+          filter: brightness(0.8) drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
+        }
+      }
+
+      .floating-elements {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .floating-element {
+        position: absolute;
+        animation: float 15s linear infinite;
+        opacity: 0;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(var(--startX), 120vh) rotate(0deg) scale(0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--endX), -20vh) rotate(360deg) scale(1);
+          opacity: 0;
+        }
+      }
+
+      .sparkle-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .sparkle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: white;
+        border-radius: 50%;
+        animation: twinkle 1.5s infinite;
+      }
+
+      @keyframes twinkle {
+        0%,
+        100% {
+          opacity: 0;
+          transform: scale(0.3);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .candle {
+        font-size: 120px;
+        cursor: pointer;
+        filter: drop-shadow(0 0 15px rgba(255, 165, 0, 0.8));
+        animation: candleFlicker 1.5s infinite;
+      }
+
+      @keyframes candleFlicker {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 15px rgba(255, 165, 0, 0.8));
+        }
+        50% {
+          filter: drop-shadow(0 0 25px rgba(255, 165, 0, 1));
+        }
+      }
+
+      .music-control {
+        display: none;
+      }
+
+      .balloon {
+        position: absolute;
+        animation: floatUpAndSway 6s ease-in-out infinite;
+        cursor: pointer;
+        font-size: 40px;
+        transform-origin: center;
+      }
+
+      @keyframes floatUpAndSway {
+        0% {
+          transform: translateY(100vh) rotate(0deg) translateX(0);
+        }
+        50% {
+          transform: translateY(50vh) rotate(180deg) translateX(20px);
+        }
+        100% {
+          transform: translateY(-100vh) rotate(360deg) translateX(-20px);
+        }
+      }
+
+      .wish-text {
+        font-size: 1.5em;
+        text-align: center;
+        margin: 20px;
+        animation: fadeInScale 1.5s ease-out forwards;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        line-height: 1.8;
+      }
+
+      @keyframes fadeInScale {
+        0% {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .gif-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .gif-container img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .fireworks-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 3;
+      }
+
+      .firework-trail {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: rgba(255, 220, 180, 0.8);
+        transform-origin: bottom;
+        animation: riseUp 1s ease-out forwards;
+      }
+
+      @keyframes riseUp {
+        0% {
+          transform: translateY(100vh) scale(1);
+          opacity: 1;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(var(--targetY)) scale(0.5);
+          opacity: 0;
+        }
+      }
+
+      .firework-particle {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        animation: explodeParticle 1.2s ease-out forwards;
+      }
+
+      @keyframes explodeParticle {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--tx), var(--ty)) scale(0);
+          opacity: 0;
+        }
+      }
+
+      .firework-glow {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: radial-gradient(circle, var(--color) 0%, transparent 70%);
+        filter: blur(4px);
+        opacity: 0;
+        animation: glowPulse 1s ease-out forwards;
+      }
+
+      @keyframes glowPulse {
+        0% {
+          transform: scale(0.1);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+
+      .candle-container {
+        position: relative;
+        margin: 50px 0;
+      }
+
+      /* 添加上升气球动画 */
+      .rising-balloon {
+        position: absolute;
+        bottom: -50px;
+        animation: riseUp 8s linear infinite;
+        font-size: 2em;
+      }
+
+      @keyframes riseUp {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* 添加黑暗转场效果 */
+      .darkness-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: black;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 2s ease;
+        z-index: 2;
+      }
+
+      .darkness-overlay.active {
+        opacity: 1;
+      }
+
+      /* 增加蛋糕动画 */
+      .cake {
+        position: absolute;
+        bottom: 20vh;
+        font-size: 5em;
+        animation: cakeFloat 3s ease-in-out infinite;
+      }
+
+      @keyframes cakeFloat {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      /* 修改祝福页面的样式 */
+      .wish-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .wish-icons {
+        display: flex;
+        gap: 20px;
+        margin: 20px 0;
+        animation: fadeInUp 1s ease-out 0.5s both;
+      }
+
+      .wish-icon {
+        font-size: 2em;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .wish-icon:hover {
+        transform: scale(1.2);
+      }
+
+      .floating-hearts {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .heart {
+        position: absolute;
+        font-size: 1.5em;
+        animation: floatHeart 4s ease-in-out infinite;
+        opacity: 0;
+      }
+
+      .wish-button {
+        padding: 12px 24px;
+        font-size: 1.2em;
+        background: linear-gradient(45deg, #ff6b6b, #ffc0cb);
+        border: none;
+        border-radius: 25px;
+        color: white;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeInUp 1s ease-out 1s both;
+      }
+
+      .wish-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+      }
+
+      /* 在 style 标签中添加返回按钮样式 */
+      .back-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        font-size: 2em;
+        cursor: pointer;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+        display: none;
+      }
+
+      .back-button:hover {
+        transform: scale(1.1);
+      }
+
+      .page:not(#welcomePage) .back-button {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="musicControl" class="music-control">🔊</div>
+    <div class="back-button" onclick="goBack()">⬅️</div>
+
+    <!-- 欢迎页面 -->
+    <div id="welcomePage" class="page active">
+      <div class="welcome-container">
+        <div class="floating-elements" id="floatingElements"></div>
+        <div class="sparkle-container" id="sparkleContainer"></div>
+        <div id="risingBalloons"></div>
+        <div class="cake">🎂</div>
+        <h1 class="welcome-text">生日快乐</h1>
+      </div>
+    </div>
+
+    <!-- 蜡烛页面 -->
+    <div id="candlePage" class="page">
+      <div class="darkness-overlay" id="darknessOverlay"></div>
+      <div id="backgroundRendering"></div>
+      <div class="floating-elements" id="candleFloatingElements"></div>
+      <div class="sparkle-container" id="candleSparkleContainer"></div>
+      <canvas id="fireworks">您的浏览器不支持canvas标签。</canvas>
+      <div class="candle-container">
+        <span class="candle" id="candle" onclick="blowCandle(this)">🕯️</span>
+      </div>
+    </div>
+
+    <!-- 祝福页面 -->
+    <div id="wishPage" class="page">
+      <div class="wish-container">
+        <div class="floating-hearts"></div>
+        <div class="wish-text">
+          王总：十八岁生日快乐！<br />
+          愿所行皆坦途<br />
+          所遇皆温暖<br />
+          所念皆所愿<br />
+          鲜花赠自己<br />
+          纵马踏花向自由<br />
+          一定要开心！！！
+        </div>
+        <div class="wish-icons">
+          <span class="wish-icon" onclick="createHearts(event)">🎂</span>
+          <span class="wish-icon" onclick="createHearts(event)">🎁</span>
+          <span class="wish-icon" onclick="createHearts(event)">🎈</span>
+          <span class="wish-icon" onclick="createHearts(event)">✨</span>
+        </div>
+      </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+      <source
+        src="https://music.163.com/song/media/outer/url?id=478387.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <script>
+      let currentPage = "welcomePage";
+      const bgMusic = document.getElementById("bgMusic");
+      const musicControl = document.getElementById("musicControl");
+      let isMusicPlaying = true;
+      let blownCandles = 0;
+
+      // 自动播放音乐
+      window.onload = function () {
+        createFloatingElements();
+        createSparkles();
+        createRisingBalloons();
+        playMusic();
+      };
+
+      // 点击任意位置开始
+      document
+        .getElementById("welcomePage")
+        .addEventListener("click", startExperience);
+
+      // 页面切换
+      function nextPage(pageId) {
+        document.getElementById(currentPage).classList.remove("active");
+        document.getElementById(pageId).classList.add("active");
+        currentPage = pageId;
+
+        // 如果是切换到蜡烛页面，创建动画元素
+        if (pageId === "candlePage") {
+          createFloatingElements("candleFloatingElements");
+          createSparkles("candleSparkleContainer");
+        }
+      }
+
+      // 开始体验
+      function startExperience() {
+        const bgMusic = document.getElementById("bgMusic");
+        bgMusic.play().catch(() => {
+          console.log("Auto-play was prevented");
+        });
+        nextPage("candlePage");
+      }
+
+      // 音乐控制
+      function playMusic() {
+        bgMusic
+          .play()
+          .then(() => {
+            musicControl.textContent = "🔊";
+          })
+          .catch(() => {
+            isMusicPlaying = false;
+            musicControl.textContent = "🔇";
+          });
+      }
+
+      musicControl.onclick = function () {
+        if (isMusicPlaying) {
+          bgMusic.pause();
+          musicControl.textContent = "🔇";
+        } else {
+          bgMusic.play();
+          musicControl.textContent = "🔊";
+        }
+        isMusicPlaying = !isMusicPlaying;
+      };
+
+      // 创建气球
+      function createBalloons() {
+        const container = document.getElementById("balloonContainer");
+        const colors = ["🎈", "🎊", "✨", "🎉", "🎂", "🎁"];
+
+        setInterval(() => {
+          const balloon = document.createElement("div");
+          balloon.className = "balloon";
+          balloon.textContent =
+            colors[Math.floor(Math.random() * colors.length)];
+          balloon.style.left = Math.random() * 100 + "vw";
+          balloon.style.animationDelay = Math.random() * 2 + "s";
+          balloon.onclick = function () {
+            this.style.animation = "explode 0.5s forwards";
+            createSparkles(this.offsetLeft, this.offsetTop);
+            setTimeout(() => this.remove(), 500);
+          };
+          container.appendChild(balloon);
+        }, 1000);
+      }
+
+      // 创建闪光效果
+      function createSparkles(x, y) {
+        for (let i = 0; i < 8; i++) {
+          const sparkle = document.createElement("div");
+          sparkle.className = "sparkle";
+          sparkle.style.left = x + "px";
+          sparkle.style.top = y + "px";
+          sparkle.style.width = Math.random() * 10 + 5 + "px";
+          sparkle.style.height = sparkle.style.width;
+          document.body.appendChild(sparkle);
+          setTimeout(() => sparkle.remove(), 1500);
+        }
+      }
+
+      // 修改烟花创建函数
+      function createFireworks() {
+        // 初始化内容
+        let fireworksCanvas = document.getElementById("fireworks");
+        let currentFireworks = document.createElement("canvas");
+        let currentObject = currentFireworks.getContext("2d");
+        let fireworksObject = fireworksCanvas.getContext("2d");
+
+        // 设置画布尺寸
+        currentFireworks.width = fireworksCanvas.width = window.innerWidth;
+        currentFireworks.height = fireworksCanvas.height = window.innerHeight;
+
+        // 初始化变量
+        let fireworksExplosion = [];
+        let lastTime = new Date();
+        let sparks = [];
+        let maxRadius = 1;
+        let autoPlayFlag = false;
+
+        // 添加数组扩展方法
+        Array.prototype.foreach = function (callback) {
+          for (let i = 0; i < this.length; i++) {
+            if (this[i] !== null) {
+              callback.apply(this[i], [i]);
+            }
+          }
+        };
+
+        // 绘制初始烟花
+        function drawFireworks() {
+          for (let i = 0; i < 100; i++) {
+            let spark = new newSpark();
+            sparks.push(spark);
+            spark.paint();
+          }
+        }
+
+        // 新建星火位置
+        let newSpark = function () {
+          this.x = Math.random() * fireworksCanvas.width;
+          this.y =
+            Math.random() * 2 * fireworksCanvas.height - fireworksCanvas.height;
+          this.r = Math.random() * maxRadius;
+        };
+
+        newSpark.prototype = {
+          paint: function () {
+            fireworksObject.save();
+            fireworksObject.beginPath();
+            fireworksObject.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+            fireworksObject.fillStyle = "rgba(255,255,255," + this.r + ")";
+            fireworksObject.fill();
+            fireworksObject.restore();
+          },
+        };
+
+        // 烟花爆炸效果
+        let explode = function (x, r, c, explodeArea, shape) {
+          this.explodes = [];
+          this.x = x;
+          this.y = fireworksCanvas.height + r;
+          this.r = r;
+          this.c = c;
+          this.shape = shape || false;
+          this.explodeArea = explodeArea;
+          this.dead = false;
+          this.ba = parseInt(getRandom(80, 200));
+        };
+
+        explode.prototype = {
+          _paint: function () {
+            fireworksObject.save();
+            fireworksObject.beginPath();
+            fireworksObject.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+            fireworksObject.fillStyle = this.c;
+            fireworksObject.fill();
+            fireworksObject.restore();
+          },
+          _move: function () {
+            let dx = this.explodeArea.x - this.x,
+              dy = this.explodeArea.y - this.y;
+            this.x = this.x + dx * 0.01;
+            this.y = this.y + dy * 0.01;
+            if (Math.abs(dx) <= this.ba && Math.abs(dy) <= this.ba) {
+              this._explode();
+              this.dead = true;
+            } else {
+              this._paint();
+            }
+          },
+          _drawLight: function () {
+            fireworksObject.save();
+            fireworksObject.fillStyle = "rgba(255,228,150,0.3)";
+            fireworksObject.beginPath();
+            fireworksObject.arc(
+              this.x,
+              this.y,
+              this.r + 3 * Math.random() + 1,
+              0,
+              2 * Math.PI
+            );
+            fireworksObject.fill();
+            fireworksObject.restore();
+          },
+          _explode: function () {
+            let embellishmentNum = getRandom(30, 200);
+            let style = getRandom(0, 10) >= 5 ? 1 : 2;
+            let color;
+            if (style === 1) {
+              color = {
+                a: parseInt(getRandom(128, 255)),
+                b: parseInt(getRandom(128, 255)),
+                c: parseInt(getRandom(128, 255)),
+              };
+            }
+            let fullRange = parseInt(getRandom(300, 400));
+            for (let i = 0; i < embellishmentNum; i++) {
+              if (style === 2) {
+                color = {
+                  a: parseInt(getRandom(128, 255)),
+                  b: parseInt(getRandom(128, 255)),
+                  c: parseInt(getRandom(128, 255)),
+                };
+              }
+              let a = getRandom(-Math.PI, Math.PI);
+              let x = getRandom(0, fullRange) * Math.cos(a) + this.x;
+              let y = getRandom(0, fullRange) * Math.sin(a) + this.y;
+              let radius = getRandom(0, 2);
+              let embellishment = new newEmbellishment(
+                this.x,
+                this.y,
+                radius,
+                color,
+                x,
+                y
+              );
+              this.explodes.push(embellishment);
+            }
+          },
+        };
+
+        // 烟花点缀生成
+        let newEmbellishment = function (
+          centerX,
+          centerY,
+          radius,
+          color,
+          tx,
+          ty
+        ) {
+          this.tx = tx;
+          this.ty = ty;
+          this.x = centerX;
+          this.y = centerY;
+          this.dead = false;
+          this.radius = radius;
+          this.color = color;
+        };
+
+        newEmbellishment.prototype = {
+          paint: function () {
+            fireworksObject.save();
+            fireworksObject.beginPath();
+            fireworksObject.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            fireworksObject.fillStyle =
+              "rgba(" +
+              this.color.a +
+              "," +
+              this.color.b +
+              "," +
+              this.color.c +
+              ",1)";
+            fireworksObject.fill();
+            fireworksObject.restore();
+          },
+          moveTo: function () {
+            this.ty = this.ty + 0.3;
+            let dx = this.tx - this.x,
+              dy = this.ty - this.y;
+            this.x = Math.abs(dx) < 0.1 ? this.tx : this.x + dx * 0.1;
+            this.y = Math.abs(dy) < 0.1 ? this.ty : this.y + dy * 0.1;
+            if (dx === 0 && Math.abs(dy) <= 80) {
+              this.dead = true;
+            }
+            this.paint();
+          },
+        };
+
+        // 修改动画效果函数
+        function animationEffect() {
+          fireworksObject.save();
+          fireworksObject.fillStyle = "rgba(0,5,25,0.1)";
+          fireworksObject.fillRect(
+            0,
+            0,
+            fireworksCanvas.width,
+            fireworksCanvas.height
+          );
+          fireworksObject.restore();
+
+          let newTime = new Date();
+          if (
+            newTime - lastTime >
+            getRandom(10, 1600) + (window.innerHeight - 767) / 2
+          ) {
+            let random = Math.random() * 100 > 15;
+            let x = getRandom(0, fireworksCanvas.width);
+            let y = getRandom(0, 400);
+            if (random) {
+              let bigExplode = new explode(
+                getRandom(0, fireworksCanvas.width),
+                getRandom(1, 3),
+                "#FFF",
+                {
+                  x: x,
+                  y: y,
+                }
+              );
+              fireworksExplosion.push(bigExplode);
+            }
+            lastTime = newTime;
+          }
+
+          sparks.foreach(function () {
+            this.paint();
+          });
+
+          fireworksExplosion.foreach(function () {
+            let that = this;
+            if (!this.dead) {
+              this._move();
+              this._drawLight();
+            } else {
+              this.explodes.foreach(function (index) {
+                if (!this.dead) {
+                  this.moveTo();
+                } else {
+                  if (index === that.explodes.length - 1) {
+                    fireworksExplosion[fireworksExplosion.indexOf(that)] = null;
+                  }
+                }
+              });
+            }
+          });
+
+          requestAnimationFrame(animationEffect);
+        }
+
+        // 添加点击事件
+        fireworksCanvas.onclick = function (evt) {
+          let x = evt.clientX;
+          let y = evt.clientY;
+          let explodeInstance = new explode(
+            getRandom(
+              fireworksCanvas.width / 3,
+              (fireworksCanvas.width * 2) / 3
+            ),
+            2,
+            "#FFF",
+            {
+              x: x,
+              y: y,
+            }
+          );
+          fireworksExplosion.push(explodeInstance);
+        };
+
+        // 调整 Canvas 样式
+        fireworksCanvas.style.position = "fixed";
+        fireworksCanvas.style.top = "0";
+        fireworksCanvas.style.left = "0";
+        fireworksCanvas.style.zIndex = "3";
+        fireworksCanvas.style.pointerEvents = "none";
+
+        // 开始动画
+        drawFireworks();
+        animationEffect();
+
+        // 窗口大小改变时调整画布大小
+        window.addEventListener("resize", function () {
+          currentFireworks.width = fireworksCanvas.width = window.innerWidth;
+          currentFireworks.height = fireworksCanvas.height = window.innerHeight;
+        });
+      }
+
+      // 从 fireworks.html 复制其他必要的函数
+      function getRandom(a, b) {
+        return Math.random() * (b - a) + a;
+      }
+
+      // 复制 explode 类和其他必要的辅助函数
+      // ... 这里需要从 fireworks.html 复制其他相关函数 ...
+
+      // 创建上升气球
+      function createRisingBalloons() {
+        const container = document.getElementById("risingBalloons");
+        const balloons = ["🎈", "🎊", "✨", "🎉", "🎂", "🎁", "🌟", "💫", "🎀"];
+
+        setInterval(() => {
+          const balloon = document.createElement("div");
+          balloon.className = "rising-balloon";
+          balloon.textContent =
+            balloons[Math.floor(Math.random() * balloons.length)];
+          balloon.style.left = `${Math.random() * 100}vw`;
+          balloon.style.animationDelay = `${Math.random() * 2}s`;
+          container.appendChild(balloon);
+
+          setTimeout(() => balloon.remove(), 8000);
+        }, 200);
+      }
+
+      // 修改蜡烛吹灭效果
+      function blowCandle(candle) {
+        if (candle.textContent === "🕯️") {
+          candle.textContent = "💫";
+
+          // 激活黑暗效果
+          const darkness = document.getElementById("darknessOverlay");
+          darkness.classList.add("active");
+
+          // 移除其他元素
+          setTimeout(() => {
+            candle.style.display = "none";
+            // 清除蜡烛页面的动画元素
+            document.getElementById("candleFloatingElements").innerHTML = "";
+            document.getElementById("candleSparkleContainer").innerHTML = "";
+            createFireworks();
+
+            // 点击任意位置进入祝福页面
+            document.getElementById("candlePage").addEventListener(
+              "click",
+              () => {
+                nextPage("wishPage");
+              },
+              { once: true }
+            );
+          }, 2000);
+        }
+      }
+
+      // 创建漂浮元素
+      function createFloatingElements(containerId = "floatingElements") {
+        const container = document.getElementById(containerId);
+        const elements = ["🎈", "🎊", "✨", "🎉", "🎂", "🎁", "🌟", "💫", "🎀"];
+
+        setInterval(() => {
+          const element = document.createElement("div");
+          element.className = "floating-element";
+          element.textContent =
+            elements[Math.floor(Math.random() * elements.length)];
+          element.style.setProperty("--startX", `${Math.random() * 100}vw`);
+          element.style.setProperty("--endX", `${Math.random() * 100}vw`);
+          element.style.fontSize = `${Math.random() * 20 + 20}px`;
+          container.appendChild(element);
+
+          setTimeout(() => element.remove(), 15000);
+        }, 300);
+      }
+
+      // 创建闪烁星星
+      function createSparkles(containerId = "sparkleContainer") {
+        const container = document.getElementById(containerId);
+
+        setInterval(() => {
+          const sparkle = document.createElement("div");
+          sparkle.className = "sparkle";
+          sparkle.style.left = `${Math.random() * 100}%`;
+          sparkle.style.top = `${Math.random() * 100}%`;
+          container.appendChild(sparkle);
+
+          setTimeout(() => sparkle.remove(), 1500);
+        }, 50);
+      }
+
+      // 添加创建心形动画的函数
+      function createHearts(event) {
+        const hearts = ["❤️", "💖", "💝", "💕", "💗", "💓", "💘"];
+        const container = document.querySelector(".floating-hearts");
+        const icon = event.target;
+        const rect = icon.getBoundingClientRect();
+
+        for (let i = 0; i < 10; i++) {
+          setTimeout(() => {
+            const heart = document.createElement("div");
+            heart.className = "heart";
+            heart.textContent =
+              hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.left = `${rect.left + rect.width / 2}px`;
+            heart.style.top = `${rect.top}px`;
+            heart.style.setProperty("--tx", `${(Math.random() - 0.5) * 200}px`);
+            container.appendChild(heart);
+
+            setTimeout(() => heart.remove(), 4000);
+          }, i * 100);
+        }
+
+        icon.style.transform = "scale(1.2)";
+        setTimeout(() => (icon.style.transform = "scale(1)"), 200);
+      }
+
+      // 添加更多祝福的函数
+      function showMoreWishes() {
+        const wishes = [
+          "愿你所求皆所愿，所行化坦途",
+          "愿你三冬暖，愿你春不寒",
+          "愿你天黑有灯，下雨有伞",
+          "愿你一路上，有良师益友相伴",
+          "愿你未来的日子里，幸福与快乐常在",
+        ];
+
+        const wishText = document.querySelector(".wish-text");
+        let currentIndex = 0;
+
+        const interval = setInterval(() => {
+          if (currentIndex >= wishes.length) {
+            clearInterval(interval);
+            return;
+          }
+
+          wishText.style.animation = "none";
+          wishText.offsetHeight; // 触发重排
+          wishText.style.animation = "fadeInScale 1.5s ease-out";
+          wishText.innerHTML = wishes[currentIndex];
+          currentIndex++;
+        }, 3000);
+      }
+
+      // 返回上一页
+      function goBack() {
+        if (currentPage === "candlePage") {
+          nextPage("welcomePage");
+          // 重置蜡烛状态
+          const candle = document.getElementById("candle");
+          candle.textContent = "🕯️";
+          candle.style.display = "inline";
+          document.getElementById("darknessOverlay").classList.remove("active");
+        } else if (currentPage === "wishPage") {
+          nextPage("candlePage");
+        }
+      }
+    </script>
+  </body>
+</html>
